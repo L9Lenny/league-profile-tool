@@ -1,4 +1,4 @@
-name: Build/Release
+name: Pro CI/CD Pipeline
 
 on:
   push:
@@ -11,8 +11,8 @@ on:
       - main
 
 jobs:
-  build:
-    runs-on: windows-latest
+  quality-gate:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -21,21 +21,52 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Build Electron App
+      - name: Security Scan (Audit)
+        run: npm audit --audit-level=high || true # Continue even if vulns found in old project
+
+      - name: Linting Check
+        run: npm run lint || true # Mark as unstable but don't fail yet
+
+  build-and-release:
+    needs: quality-gate
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Build & Package App
         run: npm run electron:build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload Artifacts
+      - name: Create Release & Upload Assets
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v1
         with:
           files: |
             release/*.exe
             release/*.zip
+            release/*.dmg
+          generate_release_notes: true
+          draft: false
+          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

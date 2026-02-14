@@ -1,5 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {ElectronService} from "../core/services";
+import { Component, OnInit } from '@angular/core';
+import { ElectronService } from "../core/services";
 
 @Component({
   selector: 'app-home',
@@ -8,9 +8,9 @@ import {ElectronService} from "../core/services";
 })
 export class HomeComponent implements OnInit {
   public title = 'LEAGUE PROFILE TOOL';
-  public currentVersion = 'V.2.4.9';
+  public currentVersion = 'V.2.4.10';
   public newestVersion = '';
-  private _remote = new ElectronService().shell; // To open the default browser window for links instead of making a new electron window
+  private _remote = new ElectronService().shell;
 
   constructor() {
   }
@@ -20,7 +20,7 @@ export class HomeComponent implements OnInit {
       const url = 'https://raw.githubusercontent.com/MManoah/league-profile-tool/master/version.json';
       const obj = await (await fetch(url)).json();
       this.newestVersion = obj.version;
-    } catch (error){
+    } catch (error) {
       this.newestVersion = this.currentVersion;
     }
   }

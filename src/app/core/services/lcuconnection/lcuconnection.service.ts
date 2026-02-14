@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import {ConnectorService} from "../connector/connector.service";
-import {ElectronService} from "..";
+import { ConnectorService } from "../connector/connector.service";
+import { ElectronService } from "..";
 import { endpoints } from "./endpoints";
-import {HttpClient} from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 
 @Injectable({
   providedIn: 'root'
@@ -21,10 +21,15 @@ export class LCUConnectionService {
   }
 
   private async makeRequest(method: string, body: Record<string, unknown>, endPoint: string, getFull: boolean): Promise<any> {
-    const options = JSON.parse(JSON.stringify(this.connector.connector));
+    if (!this.connector.connector) {
+      return Promise.reject('LCU Connector not ready. Please make sure League of Legends is open.');
+    }
+    const options = Object.assign({}, this.connector.connector);
     options.url += endPoint;
     options.method = method;
-    options.body = JSON.stringify(body);
+    if (body && Object.keys(body).length > 0) {
+      options.body = JSON.stringify(body);
+    }
     return await this.electronService.request(options)
       .then(response => {
         return new Promise(function (resolve) {
@@ -34,7 +39,7 @@ export class LCUConnectionService {
       })
       .catch(err => {
         return new Promise(function (reject) {
-          reject(err.error);
+          reject(err.error || err);
         });
       });
   }

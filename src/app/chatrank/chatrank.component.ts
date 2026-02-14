@@ -1,7 +1,7 @@
-import {Component} from '@angular/core';
-import {MatDialog} from "@angular/material/dialog";
-import {DialogComponent} from "../core/dialog/dialog.component";
-import {LCUConnectionService} from "../core/services/lcuconnection/lcuconnection.service";
+import { Component } from '@angular/core';
+import { MatDialog } from "@angular/material/dialog";
+import { DialogComponent } from "../core/dialog/dialog.component";
+import { LCUConnectionService } from "../core/services/lcuconnection/lcuconnection.service";
 
 @Component({
   selector: 'app-chatrank',
@@ -27,9 +27,9 @@ export class ChatrankComponent {
         rankedLeagueDivision: this.division,
       },
     };
-    this.lcuConnectionService.requestSend(body, 'PUT', 'lolChat').then(response => {
+    this.lcuConnectionService.requestSend(body, 'PATCH', 'lolChat').then(response => {
       this.dialog.open(DialogComponent, {
-        data: {body: response}
+        data: { body: response }
       });
     });
   }

@@ -4,11 +4,13 @@ on:
   push:
     branches:
       - main
+      - ci/github-actions
     tags:
       - 'v*'
   pull_request:
     branches:
       - main
+      - ci/github-actions
 
 jobs:
   quality-gate:

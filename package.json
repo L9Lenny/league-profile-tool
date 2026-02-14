@@ -29,7 +29,10 @@
     "appId": "com.league.app",
     "productName": "League Profile Tool",
     "mac": {
-      "category": "Utility"
+      "category": "Utility",
+      "target": [
+        "zip"
+      ]
     },
     "files": [
       "**/*",

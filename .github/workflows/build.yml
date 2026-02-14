@@ -34,9 +34,9 @@ jobs:
   build-and-release:
     needs: quality-gate
     strategy:
-      fail-fast: false # Con questo, se Mac fallisce, Windows finisce comunque
+      fail-fast: false
       matrix:
-        os: [windows-latest, macos-13]
+        os: [windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     
     steps:
